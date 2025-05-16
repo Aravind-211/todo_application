@@ -1,158 +1,84 @@
-{% load static %}
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login - Todo App</title>
-    <style>
-        /* Background gradient animation */
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+{% block title %}Login – To-Do App{% endblock %}
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ff8e53);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+{% block extra_css %}
+<style>
+  /* Full-screen flex center */
+  .auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px
+  }
+  @keyframes fadeInBg {
+    from { background: #fff; }
+    to   { background: #fff8f0; }
+  }
 
-        .login-container {
-            background: white;
-            padding: 40px 50px;
-            border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-            width: 350px;
-            text-align: center;
-            animation: fadeIn 1s ease forwards;
-        }
+  .auth-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 380px;
+    animation: slideUp 0.6s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-30px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
+  .auth-card h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #ff8c00;
+    font-weight: 700;
+  }
 
-        h2 {
-            margin-bottom: 25px;
-            color: #333;
-            font-weight: 700;
-        }
+  .auth-card .btn-primary {
+    background: linear-gradient(90deg, #ff8c00, #ffb347);
+    border: black;
+    padding: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: linear 0.3s ease;
+  }
+  .auth-card .btn-primary:hover {
+    background: linear-gradient(90deg, #ffb347, #ff8c00);
+  }
 
-        label {
-            display: block;
-            text-align: left;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #555;
-        }
+  .auth-footer {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .auth-footer a {
+    color: #ff8c00;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .auth-footer a:hover {
+    color: #d66e00;
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
 
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1.5px solid #ccc;
-            transition: border-color 0.3s;
-            font-size: 16px;
-            outline: none;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: #6a11cb;
-            box-shadow: 0 0 8px #6a11cbaa;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px 0;
-            border: none;
-            border-radius: 25px;
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.4s ease;
-            box-shadow: 0 5px 15px #2575fcaa;
-        }
-
-        button:hover {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
-            box-shadow: 0 7px 20px #6a11cbaa;
-        }
-
-        .register-link {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .register-link a {
-            color: #2575fc;
-            font-weight: 600;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .register-link a:hover {
-            color: #6a11cb;
-            text-decoration: underline;
-        }
-
-        /* Error messages */
-        .errorlist {
-            color: red;
-            font-size: 13px;
-            margin: -15px 0 10px 0;
-            list-style-type: none;
-            padding-left: 0;
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <h2>🔐 Login to Your Account</h2>
-        <form method="POST" novalidate>
-            {% csrf_token %}
-            
-            <label for="{{ form.username.id_for_label }}">Username:</label>
-            {{ form.username }}
-            {% if form.username.errors %}
-                <ul class="errorlist">
-                    {% for error in form.username.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            <label for="{{ form.password.id_for_label }}">Password:</label>
-            {{ form.password }}
-            {% if form.password.errors %}
-                <ul class="errorlist">
-                    {% for error in form.password.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            <button type="submit">Log In</button>
-        </form>
-
-        <p class="register-link">
-            Don't have an account? <a href="{% url 'register' %}">Register here</a>
-        </p>
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Login</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-primary w-100 mt-3">Log In</button>
+    </form>
+    <div class="auth-footer">
+      <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
     </div>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

@@ -1,13 +1,31 @@
-{% extends 'todo/base.html' %}
-
+{% extends 'base.html' %}
 {% block content %}
-  <h1>Your Tasks</h1>
-  <ul>
-    {% for task in tasks %}
-      <li>{{ task.title }} {% if task.completed %}✔{% endif %}</li>
-    {% empty %}
-      <li>No tasks yet!</li>
-    {% endfor %}
-  </ul>
-    <a href="{% url 'add' %}">Add Task</a>
+<div class="task-container">
+    <h2>Your Tasks ✅</h2>
+
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="task-card">
+                <div class="task-text">{{ task.title }}</div>
+                <div class="task-actions">
+                    <form method="POST" action="{% url 'delete' task.id %}">
+                        {% csrf_token %}
+                        <button class="btn-delete" title="Delete Task">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{% url 'complete' task.id %}">
+                        {% csrf_token %}
+                        <button class="btn-complete" title="Mark as Done"><i class="fas fa-check-circle"></i></button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No tasks yet 🎉</p>
+    {% endif %}
+
+    <a href="{% url 'add' %}" class="add-task-btn"><i class="fas fa-plus-circle"></i> Add Task</a>
+</div>
 {% endblock %}

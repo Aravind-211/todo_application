@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}To-Do App{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, #ff6a00, #ee0979);
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-left a {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-right a {
+  color: white;
+  border: 1px solid white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.nav-right a:hover {
+  background: white;
+  color: #ff6a00;
+}
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f6fa;
+    }
+
+    /* Navbar */
+    nav {
+      background: linear-gradient(90deg, #ff6a00 0%, #ee0979 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-left a {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-right .welcome-text {
+      font-weight: 500;
+      margin-right: 0.5rem;
+      color: #fff;
+    }
+
+    .nav-right a {
+      background-color: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 0.5rem 0.9rem;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-right a:hover {
+      background-color: white;
+      color: #ff6a00;
+    }
+
+    /* Container */
+    .container {
+      margin-top: 6rem;
+      max-width: 1000px;
+      margin: 2.5rem auto;
+      padding: 2rem;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .alert {
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .alert-info {
+      background-color: #fff4e5;
+      color: #663c00;
+      border: 1px solid #ffb347;
+    }
+
+    .alert-success {
+      background-color: #ecffe6;
+      color: #336600;
+      border: 1px solid #99cc33;
+    }
+
+    .alert-warning {
+      background-color: #fff8e1;
+      color: #665200;
+      border: 1px solid #ffd54f;
+    }
+
+    .alert-danger {
+      background-color: #ffe6e6;
+      color: #800000;
+      border: 1px solid #ff4d4d;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-left">
+      <a href="{% url 'index' %}"><i class="fas fa-tasks"></i> To-Do App</a>
+    </div>
+    <div class="nav-right">
+      {% if user.is_authenticated %}
+        <span class="welcome-text">👋 {{ user.username }}</span>
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Register</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+  <div class="container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

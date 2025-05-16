@@ -9,6 +9,7 @@ class Task(models.Model):
         blank=True    # allow blank in forms
     )
     title = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
 
     def __str__(self):

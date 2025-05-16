@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, DeleteView, View
+from django.views.generic import ListView,UpdateView, CreateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib import messages
 from django import forms
+from django.contrib.auth.decorators import login_required
 
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
@@ -15,7 +16,6 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        # Return only tasks for the logged-in user
         return Task.objects.filter(user=self.request.user)
 
 
@@ -30,25 +30,12 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class TaskDeleteView(LoginRequiredMixin, DeleteView):
-    model = Task
-    success_url = reverse_lazy('index')
+@login_required
+def delete_task(request, pk):
+    task = get_object_or_404(Task, pk=pk, user=request.user)
+    task.delete()
+    return redirect('index')
 
-    def get_queryset(self):
-        # Allow deletion only for user's own tasks
-        return Task.objects.filter(user=self.request.user)
-
-
-class TaskCompleteView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        # Toggle completed status for user's own task
-        task = get_object_or_404(Task, pk=pk, user=request.user)
-        task.completed = not task.completed
-        task.save()
-        return redirect('index')
-
-
-# Using built-in AuthenticationForm
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -109,3 +96,25 @@ def custom_login_view(request):
                 messages.error(request, 'Invalid username or password')
 
     return render(request, 'todo/custom_login.html', {'form': form})
+
+class TaskUpdateView(LoginRequiredMixin,UpdateView):
+    model = Task
+    fields = ['title']
+    template_name = 'todo/task_form.html'  # Create this form template
+    success_url = reverse_lazy('index')
+
+class TaskCompleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        task = get_object_or_404(Task, pk=pk, user=request.user)
+        task.completed = True  # mark complete
+        task.save()
+        return redirect('index')
+
+
+class TaskIncompleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        task = get_object_or_404(Task, pk=pk, user=request.user)
+        task.completed = False  # mark incomplete
+        task.save()
+        return redirect('index')
+

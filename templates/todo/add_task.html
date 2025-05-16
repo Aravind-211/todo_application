@@ -1,11 +1,11 @@
-{% extends "todo/base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Add New Task  📝</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Task</button>
-</form>
-<br>
-<a href="{% url 'index' %}">back to To-Do List</a>
+<div class="task-container">
+    <h2>Add a New Task</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn add">Save</button>
+    </form>
+</div>
 {% endblock %}

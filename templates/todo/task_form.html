@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="task-container">
+    <h2>Edit Task ✏️</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn edit">Save</button>
+    </form>
+    <br>
+    <a href="{% url 'index' %}" class="btn">← Back to Tasks</a>
+</div>
+{% endblock %}
